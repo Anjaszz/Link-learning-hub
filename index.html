@@ -472,7 +472,7 @@
             grid.style.display = 'grid';
             noResults.style.display = 'none';
             
-            grid.innerHTML = links.map((link, index) => `
+            grid.innerHTML = links.map(link => `
                 <div class="link-card">
                     <a href="${link.url}" target="_blank" class="link-content">
                         <div class="logo-container">
@@ -481,7 +481,7 @@
                         <div class="link-title">${link.title}</div>
                         <div class="link-description">${link.description || 'Link e-learning'}</div>
                     </a>
-                    <button class="delete-btn" onclick="deleteLink(${index})">🗑️ Hapus</button>
+                    <button class="delete-btn" onclick="deleteLink('${link._id}')">🗑️ Hapus</button>
                 </div>
             `).join('');
         }
@@ -495,11 +495,11 @@
             document.getElementById('linkForm').reset();
         }
 
-        async function deleteLink(index) {
+        async function deleteLink(id) {
             if (!confirm('Yakin mau hapus link ini? 🥺')) return;
             
             try {
-                const response = await fetch(`${API_URL}/${index}`, {
+                const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE'
                 });
                 

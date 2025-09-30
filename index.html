@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My E-Learning Hub 🌸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #e0c3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            color: #d946a6;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(217, 70, 166, 0.2);
+        }
+
+        .subtitle {
+            color: #9333ea;
+            font-size: 1.1em;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid #f0abfc;
+            border-radius: 50px;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .search-box input:focus {
+            border-color: #d946a6;
+            box-shadow: 0 0 20px rgba(217, 70, 166, 0.3);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .link-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 15px rgba(217, 70, 166, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #d946a6, #9333ea);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .link-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(217, 70, 166, 0.3);
+            border-color: #f0abfc;
+        }
+
+        .link-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .link-content {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .logo-container {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #fce7f3, #f0abfc);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        .link-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d946a6;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .link-description {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .delete-btn {
+            width: 100%;
+            padding: 8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .link-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        .add-link-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #d946a6, #9333ea);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(217, 70, 166, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .add-link-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 30px rgba(217, 70, 166, 0.6);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            color: #d946a6;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #9333ea;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f0abfc;
+            border-radius: 10px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #d946a6;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d946a6, #9333ea);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(217, 70, 166, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0abfc;
+            color: #9333ea;
+        }
+
+        .btn-secondary:hover {
+            background: #e879f9;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #9333ea;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+
+        .loading {
+            text-align: center;
+            color: #d946a6;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+
+        .error-message {
+            text-align: center;
+            color: #ef4444;
+            padding: 40px;
+            font-size: 1.1em;
+            background: white;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px 20px;
+            color: #9333ea;
+            font-size: 0.95em;
+        }
+
+        footer .heart {
+            color: #d946a6;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        footer .creator {
+            font-weight: bold;
+            color: #d946a6;
+            font-size: 1.1em;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            footer {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ My E-Learning Hub ✨</h1>
+            <p class="subtitle">Semua link kuliah dalam satu tempat 💕</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Cari link e-learning...">
+        </div>
+
+        <div class="loading" id="loading">Memuat data... 💫</div>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+        <div class="links-grid" id="linksGrid" style="display: none;"></div>
+        <div class="no-results" id="noResults" style="display: none;">
+            Tidak ada link yang ditemukan 🌸
+        </div>
+        
+        <footer>
+            <p>Made with <span class="heart">♥</span> by <span class="creator">Anita Kurniawati</span></p>
+            <p>© 2025 My E-Learning Hub</p>
+        </footer>
+    </div>
+
+    <button class="add-link-btn" onclick="openModal()" title="Tambah Link">+</button>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 class="modal-header">Tambah Link Baru 🌷</h2>
+            <form id="linkForm">
+                <div class="form-group">
+                    <label>Judul</label>
+                    <input type="text" id="title" placeholder="Contoh: LMS Universitas" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Link</label>
+                    <input type="url" id="url" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label>Emoji/Icon (opsional)</label>
+                    <input type="text" id="emoji" placeholder="📚" maxlength="2">
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat</label>
+                    <input type="text" id="description" placeholder="Platform belajar utama">
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ GANTI URL INI DENGAN BACKEND URL KAMU SETELAH DEPLOY
+        const API_URL = 'https://link-learning-be.vercel.app/api/links';
+        // Contoh setelah deploy: 'https://your-backend.railway.app/api/links'
+        
+        let allLinks = [];
+
+        async function loadLinks() {
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                allLinks = await response.json();
+                renderLinks(allLinks);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('linksGrid').style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading links:', error);
+                document.getElementById('loading').style.display = 'none';
+                const errorMsg = document.getElementById('errorMessage');
+                errorMsg.style.display = 'block';
+                errorMsg.innerHTML = `
+                    ❌ Gagal memuat data dari server<br>
+                    <small>Pastikan backend sudah berjalan di: ${API_URL}</small><br>
+                    <small>Error: ${error.message}</small>
+                `;
+            }
+        }
+
+        function renderLinks(links) {
+            const grid = document.getElementById('linksGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (links.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            grid.innerHTML = links.map((link, index) => `
+                <div class="link-card">
+                    <a href="${link.url}" target="_blank" class="link-content">
+                        <div class="logo-container">
+                            ${link.emoji || '🔗'}
+                        </div>
+                        <div class="link-title">${link.title}</div>
+                        <div class="link-description">${link.description || 'Link e-learning'}</div>
+                    </a>
+                    <button class="delete-btn" onclick="deleteLink(${index})">🗑️ Hapus</button>
+                </div>
+            `).join('');
+        }
+
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.getElementById('linkForm').reset();
+        }
+
+        async function deleteLink(index) {
+            if (!confirm('Yakin mau hapus link ini? 🥺')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/${index}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete');
+                }
+                
+                await loadLinks();
+                alert('✨ Link berhasil dihapus!');
+            } catch (error) {
+                console.error('Error deleting link:', error);
+                alert('❌ Gagal menghapus link!');
+            }
+        }
+
+        document.getElementById('linkForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newLink = {
+                title: document.getElementById('title').value,
+                url: document.getElementById('url').value,
+                emoji: document.getElementById('emoji').value || '🔗',
+                description: document.getElementById('description').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newLink)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add link');
+                }
+
+                await loadLinks();
+                closeModal();
+                alert('✨ Link berhasil ditambahkan!');
+            } catch (error) {
+                console.error('Error adding link:', error);
+                alert('❌ Gagal menambahkan link!');
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allLinks.filter(link => 
+                link.title.toLowerCase().includes(searchTerm) ||
+                (link.description && link.description.toLowerCase().includes(searchTerm))
+            );
+            renderLinks(filtered);
+        });
+
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Load links on page load
+        loadLinks();
+    </script>
+</body>
+</html>
